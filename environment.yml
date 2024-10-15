@@ -1,0 +1,33 @@
+name: MLProjects
+channels:
+  - defaults
+dependencies:
+  - python=3.11 
+  - pandas
+  - jupyter 
+  - seaborn 
+  - keras 
+  - tensorflow
+  - matplotlib
+  - numpy
+  - scipy
+  - scikit-learn 
+  - conda-forge::xgboost
+  - imbalanced-learn
+  - sympy
+  - statsmodels
+  - pip
+  - pip:
+    - ipywidgets
+    - tqdm
+    - lime
+    - opencv-python
+    - folium
+    - wordcloud
+    - nltk
+    - gensim
+    - umap-learn
+    - scikit-surprise
+    - tabulate
+    - keras-tuner
+    - folium
