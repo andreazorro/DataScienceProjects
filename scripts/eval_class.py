@@ -5,14 +5,16 @@ from tqdm import tqdm
 
 def evaluate_models(models, X_train, X_test, y_train, y_test):
 
-    # Initialize empty lists to store the results for both training and test data
+    # Initialize empty variables to store the results for both training and test data
     results = []
+    parameters = {}
 
     # Wrap the loop with tqdm for tracking
     for name, model in tqdm(models.items(), desc="Evaluating models"):
         
         # Model training
         model.fit(X_train, y_train)
+        model_params = model.best_estimator_ if hasattr(model, 'best_estimator_') else model
 
         # Predictions and metrics for training data
         y_train_pred = model.predict(X_train)
@@ -26,7 +28,7 @@ def evaluate_models(models, X_train, X_test, y_train, y_test):
         test_precision, test_recall, test_f1_score, _ = precision_recall_fscore_support(y_test, y_test_pred, average='weighted', zero_division=0)
         test_mcc = matthews_corrcoef(y_test, y_test_pred)
 
-        # Append the test results to the test list
+        # Append the results to the list
         results.append({
             'Model': name,
             'Accuracy Train': train_accuracy,
@@ -41,6 +43,11 @@ def evaluate_models(models, X_train, X_test, y_train, y_test):
             'MCC Test': test_mcc
         })
 
+        # Append the parameters to the dictionary
+
+        parameters[name] = model_params
+
+
     # Convert the list to a DataFrame
     results_df = pd.DataFrame(results)
 
@@ -50,8 +57,6 @@ def evaluate_models(models, X_train, X_test, y_train, y_test):
     # Convert DataFrame to Markdown
     if not results_df.empty:
         table_md = results_df.to_markdown(index=False)
-        # Add title for the metrics table
-        markdown_content += "#### Metrics\n\n"
         
         # Center the headers for the table
         lines = table_md.split('\n')
@@ -63,4 +68,4 @@ def evaluate_models(models, X_train, X_test, y_train, y_test):
             # Add the centered table to the Markdown content
             markdown_content += centered_table_md + "\n\n"
 
-    return results_df, markdown_content
+    return parameters, markdown_content

@@ -5,9 +5,3 @@ logs/
 
 # Ignore the my_dir folder
 my_dir/
-
-# Ignore the geoBoundaries.geojson file in the Bank_Churn directory
-Bank_Churn/geoBoundaries.geojson
-
-#Ignore large files
-listings.csv

@@ -5,9 +5,14 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, AdaBoostClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import RandomizedSearchCV
+from sklearn.metrics import f1_score, make_scorer
 import numpy as np
 
 def ml_class_im(cv, rs):
+
+    # Define a custom scorer for multiclass classification
+    scorer = make_scorer(f1_score, average='weighted')
+
     # Logistic Regression
     param_grid = {
         'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000],
@@ -16,7 +21,7 @@ def ml_class_im(cv, rs):
         'class_weight': [{0:0.05, 1:0.95}, {0:0.1, 1:0.9}, {0:0.2, 1:0.8}]
     }
     logistic_model = LogisticRegression(random_state=rs)
-    logistic_grid = RandomizedSearchCV(logistic_model, param_grid, cv=cv, n_jobs=-1, scoring='f1')
+    logistic_grid = RandomizedSearchCV(logistic_model, param_grid, cv=cv, n_jobs=-1, scoring=scorer)
 
     # KNN
     param_grid = {
@@ -27,14 +32,14 @@ def ml_class_im(cv, rs):
         'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute']
     }
     knn_model = KNeighborsClassifier(weights='distance')
-    knn_grid = RandomizedSearchCV(knn_model, param_grid, cv=cv, n_jobs=-1, scoring='f1')
+    knn_grid = RandomizedSearchCV(knn_model, param_grid, cv=cv, n_jobs=-1, scoring=scorer)
 
     # Gaussian Naive Bayes
     param_grid = {
         'var_smoothing': [1e-9, 1e-10, 1e-11, 1e-12, 1e-13]
     }
     gnb_model = GaussianNB()
-    gnb_grid = RandomizedSearchCV(gnb_model, param_grid, cv=cv, n_jobs=-1, scoring='f1')
+    gnb_grid = RandomizedSearchCV(gnb_model, param_grid, cv=cv, n_jobs=-1, scoring=scorer)
 
     # Decision Tree
     param_grid = {
@@ -46,7 +51,7 @@ def ml_class_im(cv, rs):
         'class_weight': [{0:0.05, 1:0.95}, {0:0.1, 1:0.9}, {0:0.2, 1:0.8}]
     }
     dt_model = DecisionTreeClassifier(random_state=rs)
-    dt_grid = RandomizedSearchCV(dt_model, param_grid, cv=cv, n_jobs=-1, scoring='f1')
+    dt_grid = RandomizedSearchCV(dt_model, param_grid, cv=cv, n_jobs=-1, scoring=scorer)
 
     # Random Forest
     param_grid = {
@@ -60,7 +65,7 @@ def ml_class_im(cv, rs):
         'class_weight': [{0:0.05, 1:0.95}, {0:0.1, 1:0.9}, {0:0.2, 1:0.8}]
     }
     rf_model = RandomForestClassifier(random_state=rs)
-    rf_grid = RandomizedSearchCV(rf_model, param_grid, cv=cv, n_jobs=-1, scoring='f1')
+    rf_grid = RandomizedSearchCV(rf_model, param_grid, cv=cv, n_jobs=-1, scoring=scorer)
 
     # Extra Trees
     param_grid = {
@@ -74,7 +79,7 @@ def ml_class_im(cv, rs):
         'class_weight': [{0:0.05, 1:0.95}, {0:0.1, 1:0.9}, {0:0.2, 1:0.8}]
     }
     et_model = ExtraTreesClassifier(random_state=rs)
-    et_grid = RandomizedSearchCV(et_model, param_grid, cv=cv, n_jobs=-1, scoring='f1')
+    et_grid = RandomizedSearchCV(et_model, param_grid, cv=cv, n_jobs=-1, scoring=scorer)
 
     # AdaBoost
     param_grid = {
@@ -82,7 +87,7 @@ def ml_class_im(cv, rs):
         'learning_rate': [0.001, 0.01, 0.1],  # Use lower learning rates to avoid overfitting
     }
     ab_model = AdaBoostClassifier(random_state=rs, algorithm='SAMME')
-    ab_grid = RandomizedSearchCV(ab_model, param_grid, cv=cv, n_jobs=-1, scoring='f1')
+    ab_grid = RandomizedSearchCV(ab_model, param_grid, cv=cv, n_jobs=-1, scoring=scorer)
 
     # Neural Networks
     param_grid = {
@@ -93,7 +98,7 @@ def ml_class_im(cv, rs):
         'learning_rate_init': [0.001, 0.01, 0.1]
     }
     mlp_model = MLPClassifier(random_state=rs, max_iter=5000, solver='adam', early_stopping=True)
-    mlp_grid = RandomizedSearchCV(mlp_model, param_grid, cv=cv, n_jobs=-1, scoring='f1')
+    mlp_grid = RandomizedSearchCV(mlp_model, param_grid, cv=cv, n_jobs=-1, scoring=scorer)
 
     # Models dictionary 
     models = {
@@ -143,7 +148,7 @@ def ml_class(cv, rs):
         'max_depth': [2, 4, 6, 8, 10],
         'min_samples_split': [2, 5, 10],
         'min_samples_leaf': [1, 2, 4],
-        'max_features': ['auto', 'sqrt', 'log2'],
+        'max_features': ['sqrt', 'log2'],
         'ccp_alpha': np.linspace(0, 0.05, 50),
     }
     dt_model = DecisionTreeClassifier(random_state=rs)

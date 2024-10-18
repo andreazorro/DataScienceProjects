@@ -7,12 +7,14 @@ def evaluate_models(models, X_train, X_test, y_train, y_test):
 
     # Initialize empty lists to store the results for both training and test data
     results = []
+    parameters = {}
 
     # Wrap the loop with tqdm for tracking
     for name, model in tqdm(models.items(), desc="Evaluating models"):
         
         # Model training
         model.fit(X_train, y_train)
+        model_params = model.best_estimator_ if hasattr(model, 'best_estimator_') else model
 
         # Predictions and metrics for training data
         y_train_pred = model.predict(X_train)
@@ -37,6 +39,10 @@ def evaluate_models(models, X_train, X_test, y_train, y_test):
             'R2 Test': test_r2
         })
 
+        # Append the parameters to the dictionary
+
+        parameters[name] = model_params
+
     # Convert the list to a DataFrame
     results_df = pd.DataFrame(results)
 
@@ -59,4 +65,4 @@ def evaluate_models(models, X_train, X_test, y_train, y_test):
             # Add the centered table to the Markdown content
             markdown_content += centered_table_md + "\n\n"
 
-    return results_df, markdown_content
+    return parameters, markdown_content
